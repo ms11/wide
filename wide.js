@@ -1,6 +1,13 @@
+// Array Remove - By John Resig (MIT Licensed)
+HTMLCollection.prototype.remove = function(from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
+
+
 var counter = 0;
-var base_speed = 20;
-var base_div = 20000;
+var base_speed = 300;
 //var t = 
 function add() {
 	var base = document.getElementById("chi");
@@ -16,7 +23,7 @@ function add() {
         n.style.left = window.innerWidth +"px";
     }else{
         n.style.left = pos+"px";
-        n.style.top = "0px";
+        n.style.top = "-200px";
     }
     
     /*n.style.left = left+"px";
@@ -28,15 +35,15 @@ function add() {
 var t = +new Date;
 function move() {
     var moved = document.getElementsByClassName("moved");
+    var nt = +new Date;
+    var diff = nt-t;
+    t = nt;
     for(var i = 0; i < moved.length;i++) {
         var mult = Number(moved[i].getAttribute("speed_mult"));
-        var nt = +new Date;
-        var diff = nt-t;
-        var newtop = Number(moved[i].style.top.replace("px","")) + (base_speed * mult)*(diff/base_div);
-        var newleft = Number(moved[i].style.left.replace("px","")) - (base_speed * mult)*(diff/base_div);
-        if(newtop > window.innerHeight || newleft < 0) {
+        var newtop = Number(moved[i].style.top.replace("px","")) + (base_speed * mult)*(diff/1000);
+        var newleft = Number(moved[i].style.left.replace("px","")) - (base_speed * mult)*(diff/1000);
+        if(newtop > window.innerHeight || newleft < -200) {
             moved[i].parentNode.removeChild(moved[i]);
-            moved[i] = 0;
             add();
         }else{
         moved[i].style.left = newleft+"px";
@@ -47,7 +54,7 @@ function move() {
 }
 
 function color() {
-    return Math.floor(Math.random() * (255- 100) + 100).toString(16).toUpperCase();
+    return Math.floor(Math.random() * (255 - 100) + 100).toString(16).toUpperCase();
 }
 
 function count() {
