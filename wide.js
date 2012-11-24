@@ -8,6 +8,7 @@ HTMLCollection.prototype.remove = function(from, to) {
 
 var counter = 0;
 var base_speed = 300;
+var running = true;
 //var t = 
 function add() {
 	var base = document.getElementById("chi");
@@ -50,7 +51,9 @@ function move() {
         moved[i].style.top = newtop+"px";  
         }
     }
-    mozRequestAnimationFrame(move);
+    if(running) {
+        mozRequestAnimationFrame(move);
+    }
 }
 
 function color() {
@@ -65,3 +68,12 @@ function count() {
 
 move();
 //setInterval(move,0.1);
+
+function pause() {
+    running = false;
+}
+
+function start() {
+    running = true;
+    move();
+}

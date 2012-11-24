@@ -99,8 +99,10 @@ body {
        transform="matrix(0.72995058,0,0,0.74008921,86.630939,932.00972)"/>
   </g>
 </svg>
-
-<button style="z-index:10" onclick="add(); count();">Add</button>   <span style="color:white" id="count">0</span>
-
+<div style="position: fixed; top:0px; left:0px;">
+<button onclick="add(); count();">Add</button>   <span style="color:white" id="count">0</span><br />
+<button onclick="pause();">Pause</button><br />
+<button onclick="start(); count();">Start</button>
+</div>
 </body>
 </html>
