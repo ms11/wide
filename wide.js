@@ -5,9 +5,6 @@ HTMLCollection.prototype.remove = function(from, to) {
   return this.push.apply(this, rest);
 };
 
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 var counter = 0;
 var base_speed = 300;
@@ -18,42 +15,16 @@ function add() {
 	var n = base.cloneNode(true);
 	n.style.display = "";
     n.id = "chi" + (++counter);
-    var timer = getRandomInt(5,20)/10;
-    n.classList.add("class_chi");
-    n.style.transitionDuration = timer+"s";
-    n.style.transitionProperty = "left,right,top,bottom";
-    n.style.transitionTimingFunction = "linear";
-    var pos = getRandomInt(0, (window.innerHeight+window.innerWidth));
-    var pos2 = getRandomInt(0, (window.innerHeight+window.innerWidth));
-    var pos3 = getRandomInt(0, (window.innerHeight+window.innerWidth));
-    var d1 = Math.abs(window.innerHeight - pos);
-    var d2 = Math.abs(window.innerHeight - pos2);
-    var d3 = Math.abs(window.innerHeight - pos3);
-    if(d1 < d2 && d1 < d3 ) {
-        //nothing at all, pos is fine as is
-    }
-    else if( d2 < d1 && d2 < d3) {
-        pos = pos2;
-    }else {
-        pos = pos3;
-    }
+    n.classList.add("moved");
+    n.setAttribute("speed_mult",Math.random()+1);
+    var pos = Math.floor(Math.random()*(window.innerWidth+window.innerHeight));
+    
     if(pos > window.innerWidth) { 
-        var off = (pos - window.innerWidth);
-        n.style.top =  off +"px";
+        n.style.top = (pos - window.innerWidth) +"px";
         n.style.left = window.innerWidth +"px";
-
-        n.targetTop = window.innerHeight;
-        n.targetLeft = window.innerWidth - (window.innerHeight - off);
     }else{
         n.style.left = pos+"px";
         n.style.top = "-200px";
-        if(pos > window.innerHeight) {
-            n.targetTop = window.innerHeight;
-            n.targetLeft = pos - window.innerHeight;
-        } else {
-            n.targetTop = pos;
-            n.targetLeft = -200;
-        }
     }
     
     /*n.style.left = left+"px";
@@ -61,18 +32,32 @@ function add() {
     var glow = n.getElementById("glow");
     glow.style.stroke = "#" + color() + color() + color();
     document.body.appendChild(n);
-    setTimeout(function() {
-        n.style.left = n.targetLeft +"px";
-        n.style.top = n.targetTop +"px";
-    },10);
-    setTimeout(function() {
-        document.body.removeChild(n);
-        add();
-    },timer*1000);
+}
+var t = +new Date;
+function move() {
+    var moved = document.getElementsByClassName("moved");
+    var nt = +new Date;
+    var diff = nt-t;
+    t = nt;
+    for(var i = 0; i < moved.length;i++) {
+        var mult = Number(moved[i].getAttribute("speed_mult"));
+        var newtop = Number(moved[i].style.top.replace("px","")) + (base_speed * mult)*(diff/1000);
+        var newleft = Number(moved[i].style.left.replace("px","")) - (base_speed * mult)*(diff/1000);
+        if(newtop > window.innerHeight || newleft < -200) {
+            moved[i].parentNode.removeChild(moved[i]);
+            add();
+        }else{
+        moved[i].style.left = newleft+"px";
+        moved[i].style.top = newtop+"px";  
+        }
+    }
+    if(running) {
+        mozRequestAnimationFrame(move);
+    }
 }
 
 function color() {
-    return getRandomInt(100,255).toString(16).toUpperCase();
+    return Math.floor(Math.random() * (255 - 100) + 100).toString(16).toUpperCase();
 }
 
 function count() {
@@ -81,11 +66,14 @@ function count() {
     n.innerHTML = (++c).toString();
 }
 
-function reset() {
-    var n = document.getElementById("count");
-    n.innerHTML = "0";
-    var elems = document.getElementsByClassName("class_chi");
-    for(var i = 0; i < elems.length; i++) {
-        document.body.removeChild(elems[i]);
-    }
+move();
+//setInterval(move,0.1);
+
+function pause() {
+    running = false;
+}
+
+function start() {
+    running = true;
+    move();
 }
