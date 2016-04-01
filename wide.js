@@ -52,7 +52,7 @@ function move() {
         }
     }
     if(running) {
-        mozRequestAnimationFrame(move);
+        requestAnimationFrame(move);
     }
 }
 
